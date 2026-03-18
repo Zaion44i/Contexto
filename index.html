@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contexto</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d1b2e;
+    --surface: #132540;
+    --surface2: #1a3054;
+    --border: #1e3a5f;
+    --border2: #2a4e7a;
+    --text: #dce8f5;
+    --text-dim: #8aaac8;
+    --text-muted: #4a6a8a;
+    --accent: #b8d4ee;
+    --warm: #f0c060;
+    --cold: #7ab8e8;
+    --gold: #f0c060;
+    --red: #e06868;
+    --green: #60b080;
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* SOFT RADIAL GLOW */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 50% at 15% 10%, rgba(42,100,200,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 85% 90%, rgba(20,70,150,0.18) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* GRAIN OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* SCREENS */
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+  .screen.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ─── HOME SCREEN ─── */
+  .home-inner {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .logo-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  .logo {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 300;
+    font-size: clamp(64px, 12vw, 100px);
+    color: var(--text);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+    position: relative;
+  }
+
+  .logo span {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--text-muted);
+    margin-bottom: 52px;
+  }
+
+  .home-divider {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, transparent, var(--border2), transparent);
+    margin-bottom: 48px;
+  }
+
+  .home-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 220px;
+  }
+
+  .btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 14px 24px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--surface);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .btn:hover {
+    border-color: var(--border2);
+    color: var(--text);
+  }
+
+  .btn:hover::before { opacity: 1; }
+  .btn span { position: relative; z-index: 1; }
+
+  .btn-primary {
+    border-color: var(--border2);
+    color: var(--text);
+    background: var(--surface);
+  }
+  .btn-primary:hover {
+    background: var(--surface2);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ─── HOW TO PLAY SCREEN ─── */
+  .modal-wrap {
+    width: min(480px, 90vw);
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .modal-title {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 300;
+    font-size: 28px;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .btn-close {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    padding: 8px 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+  .btn-close:hover { border-color: var(--border2); color: var(--text-dim); }
+
+  .how-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .how-step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    padding-top: 2px;
+    min-width: 28px;
+  }
+
+  .step-text {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+  }
+
+  .step-text strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .color-bar {
+    display: flex;
+    gap: 6px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .color-chip {
+    flex: 1;
+    height: 6px;
+    border-radius: 1px;
+  }
+
+  .chip-hot { background: var(--red); }
+  .chip-warm { background: var(--warm); }
+  .chip-cold { background: var(--cold); }
+  .chip-ice { background: var(--text-muted); }
+
+  .color-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+
+  .color-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* ─── GAME SCREEN ─── */
+  .game-wrap {
+    width: min(520px, 95vw);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 0;
+  }
+
+  .game-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+    margin-bottom: 24px;
+  }
+
+  .game-logo {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 300;
+    font-size: 22px;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .game-logo:hover { color: var(--text-dim); }
+
+  .game-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-sm {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: 'Nunito', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-sm:hover { border-color: var(--border2); color: var(--text-dim); }
+
+  .btn-hint {
+    border-color: var(--border);
+    color: var(--gold);
+    opacity: 0.7;
+  }
+  .btn-hint:hover { opacity: 1; border-color: var(--gold); color: var(--gold); }
+
+  .input-area {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+  }
+
+  .word-input {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-right: none;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    padding: 14px 18px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .word-input::placeholder { color: var(--text-muted); font-size: 12px; letter-spacing: 0.15em; }
+  .word-input:focus { border-color: var(--border2); }
+
+  .btn-send {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-send:hover { background: var(--border); color: var(--text); }
+
+  .guesses-area {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-right: 4px;
+  }
+
+  .guesses-area::-webkit-scrollbar { width: 3px; }
+  .guesses-area::-webkit-scrollbar-track { background: transparent; }
+  .guesses-area::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .guess-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    animation: slideIn 0.25s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .guess-rank {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    min-width: 38px;
+    text-align: right;
+  }
+
+  .guess-word {
+    flex: 1;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    color: var(--text);
+  }
+
+  .guess-bar-wrap {
+    width: 80px;
+    height: 3px;
+    background: var(--border);
+    position: relative;
+  }
+
+  .guess-bar {
+    height: 100%;
+    border-radius: 1px;
+    transition: width 0.5s ease;
+  }
+
+  .rank-badge {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 3px 8px;
+    border: 1px solid;
+    text-transform: uppercase;
+    min-width: 48px;
+    text-align: center;
+  }
+
+  /* Rank colors */
+  .rank-1 { border-color: var(--gold); color: var(--gold); }
+  .rank-hot { border-color: var(--red); color: var(--red); }
+  .rank-warm { border-color: var(--warm); color: var(--warm); }
+  .rank-cold { border-color: var(--cold); color: var(--cold); }
+  .rank-ice { border-color: var(--text-muted); color: var(--text-muted); }
+
+  .bar-1 { background: var(--gold); }
+  .bar-hot { background: var(--red); }
+  .bar-warm { background: var(--warm); }
+  .bar-cold { background: var(--cold); }
+  .bar-ice { background: var(--text-muted); }
+
+  .empty-state {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    color: var(--text-muted);
+  }
+
+  .empty-icon {
+    font-size: 32px;
+    opacity: 0.3;
+  }
+
+  .empty-text {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  /* ─── HISTORY SCREEN ─── */
+  .history-inner {
+    width: min(420px, 90vw);
+  }
+
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 24px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  .history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .hist-word {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--text);
+    letter-spacing: 0.01em;
+  }
+
+  .hist-info {
+    text-align: right;
+  }
+
+  .hist-guesses {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .hist-status {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+
+  .status-win { color: var(--green); }
+  .status-lose { color: var(--text-muted); }
+
+  .empty-hist {
+    color: var(--text-muted);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 32px 0;
+  }
+
+  /* WIN OVERLAY */
+  .win-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(17,17,16,0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s;
+  }
+  .win-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .win-card {
+    text-align: center;
+    padding: 48px 40px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    width: min(360px, 90vw);
+  }
+
+  .win-label {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .win-word {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 300;
+    font-size: 48px;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .win-guesses-count {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    margin-bottom: 32px;
+  }
+
+  .win-guesses-count span {
+    color: var(--gold);
+  }
+
+  /* HINT TOAST */
+  .hint-toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    padding: 12px 24px;
+    font-size: 13px;
+    font-family: 'Nunito', sans-serif;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+    z-index: 200;
+    white-space: nowrap;
+  }
+  .hint-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ERROR SHAKE */
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  .shake { animation: shake 0.25s ease; }
+
+  .counter-badge {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-align: center;
+    padding: 10px 0 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="home-inner">
+    <div class="logo-eyebrow">jogo de palavras</div>
+    <div class="logo">con<span>texto</span></div>
+    <div class="logo-sub">encontre a palavra secreta</div>
+    <div class="home-divider"></div>
+    <div class="home-buttons">
+      <button class="btn btn-primary" onclick="startGame()"><span>jogar</span></button>
+      <button class="btn" onclick="showScreen('screen-how')"><span>como jogar</span></button>
+      <button class="btn" onclick="showHistory()"><span>histórico</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- HOW TO PLAY -->
+<div class="screen" id="screen-how">
+  <div class="modal-wrap">
+    <div class="modal-header">
+      <div class="modal-title">Como jogar</div>
+      <button class="btn-close" onclick="showScreen('screen-home')">voltar</button>
+    </div>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="step-num">01.</div>
+        <div class="step-text">Há uma <strong>palavra secreta</strong> que você precisa descobrir. Você tem tentativas ilimitadas.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">02.</div>
+        <div class="step-text">Cada palavra que você digitar receberá uma <strong>posição</strong> baseada em quão semanticamente próxima ela está da palavra secreta.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">03.</div>
+        <div class="step-text">O algoritmo usa <strong>inteligência artificial</strong> para calcular a similaridade contextual entre as palavras — não apenas letras.</div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">04.</div>
+        <div class="step-text">Use o botão <strong>dica</strong> para revelar uma palavra próxima à resposta quando estiver travado.</div>
+      </div>
+    </div>
+    <div class="color-bar">
+      <div class="color-chip chip-hot"></div>
+      <div class="color-chip chip-warm"></div>
+      <div class="color-chip chip-cold"></div>
+      <div class="color-chip chip-ice"></div>
+    </div>
+    <div class="color-labels">
+      <div class="color-label">muito quente</div>
+      <div class="color-label">quente</div>
+      <div class="color-label">frio</div>
+      <div class="color-label">gelado</div>
+    </div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div class="screen" id="screen-game">
+  <div class="game-wrap">
+    <div class="game-header">
+      <div class="game-logo" onclick="showScreen('screen-home')">contexto</div>
+      <div class="game-actions">
+        <button class="btn-sm btn-hint" onclick="getHint()">dica</button>
+        <button class="btn-sm" onclick="restartGame()">reiniciar</button>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <input class="word-input" id="word-input" type="text" placeholder="digite uma palavra..." autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter') submitGuess()">
+      <button class="btn-send" onclick="submitGuess()">→</button>
+    </div>
+
+    <div class="counter-badge" id="counter-badge" style="display:none"></div>
+
+    <div class="guesses-area" id="guesses-area">
+      <div class="empty-state" id="empty-state">
+        <div class="empty-icon">◎</div>
+        <div class="empty-text">nenhuma tentativa ainda</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="screen" id="screen-history">
+  <div class="history-inner">
+    <div class="modal-header">
+      <div class="modal-title">Histórico</div>
+      <button class="btn-close" onclick="showScreen('screen-home')">voltar</button>
+    </div>
+    <div class="history-list" id="history-list"></div>
+  </div>
+</div>
+
+<!-- WIN OVERLAY -->
+<div class="win-overlay" id="win-overlay">
+  <div class="win-card">
+    <div class="win-label">você encontrou</div>
+    <div class="win-word" id="win-word"></div>
+    <div class="win-guesses-count" id="win-guesses-count"></div>
+    <button class="btn btn-primary" onclick="restartGame(); document.getElementById('win-overlay').classList.remove('show')"><span>jogar novamente</span></button>
+  </div>
+</div>
+
+<!-- HINT TOAST -->
+<div class="hint-toast" id="hint-toast"></div>
+
+<script>
+// ─── WORD DATABASE ───
+const wordDatabase = [
+  {
+    secret: "oceano",
+    hints: ["mar", "onda", "praia", "água", "marítimo"],
+    neighbors: {
+      "mar": 2, "água": 4, "praia": 8, "onda": 10, "marítimo": 15,
+      "rio": 20, "lago": 25, "peixe": 18, "barco": 22, "navio": 16,
+      "mergulho": 30, "sal": 35, "azul": 40, "profundo": 28, "corente": 45,
+      "tubarão": 38, "baleia": 32, "coral": 42, "maré": 12, "litoral": 14,
+      "costa": 19, "ilha": 24, "porto": 27, "submarino": 34, "náutico": 37
+    }
+  },
+  {
+    secret: "livro",
+    hints: ["leitura", "página", "autor", "história", "biblioteca"],
+    neighbors: {
+      "leitura": 3, "página": 5, "autor": 8, "história": 12, "biblioteca": 7,
+      "romance": 15, "conto": 18, "poesia": 20, "texto": 10, "escrita": 13,
+      "capítulo": 6, "leitor": 9, "editora": 22, "literatura": 4, "ficção": 16,
+      "papel": 25, "tinta": 30, "estante": 28, "narrativa": 17, "personagem": 19,
+      "enredo": 21, "obra": 11, "escritor": 14, "manuscrito": 35, "encadernação": 40
+    }
+  },
+  {
+    secret: "música",
+    hints: ["som", "melodia", "ritmo", "canção", "instrumento"],
+    neighbors: {
+      "som": 3, "melodia": 4, "ritmo": 6, "canção": 2, "instrumento": 8,
+      "nota": 10, "acorde": 12, "harmonia": 7, "letra": 15, "voz": 11,
+      "guitarra": 18, "piano": 16, "violão": 17, "bateria": 20, "flauta": 22,
+      "cantor": 9, "compositor": 13, "álbum": 14, "banda": 19, "concerto": 25,
+      "compasso": 21, "tonalidade": 30, "timbre": 28, "frequência": 35, "vibração": 32
+    }
+  },
+  {
+    secret: "tempo",
+    hints: ["hora", "relógio", "minuto", "passado", "futuro"],
+    neighbors: {
+      "hora": 3, "relógio": 5, "minuto": 4, "passado": 8, "futuro": 7,
+      "presente": 9, "segundo": 6, "dia": 12, "ano": 10, "século": 15,
+      "história": 18, "memória": 20, "duração": 13, "período": 14, "época": 16,
+      "cronologia": 22, "calendário": 11, "data": 17, "prazo": 25, "eternidade": 30,
+      "instante": 19, "momento": 21, "ritmo": 28, "mudança": 35, "fluxo": 32
+    }
+  },
+  {
+    secret: "fogo",
+    hints: ["chama", "calor", "brasa", "fumaça", "cinza"],
+    neighbors: {
+      "chama": 2, "calor": 4, "brasa": 6, "fumaça": 5, "cinza": 8,
+      "incêndio": 3, "labareda": 7, "fogueira": 9, "queimar": 10, "ardente": 12,
+      "explosão": 15, "faísca": 11, "lava": 18, "vulcão": 20, "flama": 13,
+      "combustão": 16, "temperatura": 22, "quente": 14, "sol": 25, "luz": 28,
+      "vela": 19, "fósforo": 21, "isqueiro": 24, "aquecimento": 30, "energia": 35
+    }
+  },
+  {
+    secret: "floresta",
+    hints: ["árvore", "mata", "bosque", "natureza", "selva"],
+    neighbors: {
+      "árvore": 2, "mata": 3, "bosque": 4, "natureza": 7, "selva": 5,
+      "verde": 10, "folha": 8, "tronco": 9, "raiz": 12, "galho": 11,
+      "animal": 15, "pássaro": 14, "planta": 13, "vegetação": 6, "madeira": 16,
+      "trilha": 18, "sombra": 20, "umidade": 22, "biodiversidade": 25, "ecossistema": 28,
+      "cedro": 30, "pinheiro": 27, "cogumelo": 35, "musgo": 32, "cipó": 38
+    }
+  },
+  {
+    secret: "sonho",
+    hints: ["dormir", "noite", "imaginação", "desejo", "ilusão"],
+    neighbors: {
+      "dormir": 3, "noite": 5, "imaginação": 4, "desejo": 6, "ilusão": 8,
+      "pesadelo": 7, "inconsciente": 10, "mente": 12, "fantasia": 9, "visão": 11,
+      "esperança": 15, "aspiração": 14, "meta": 18, "objetivo": 20, "utopia": 22,
+      "realidade": 16, "pensamento": 13, "memória": 25, "subconsciente": 28, "surrealismo": 30,
+      "cama": 19, "almofada": 24, "repouso": 21, "vigília": 35, "lucidez": 40
+    }
+  },
+  {
+    secret: "cidade",
+    hints: ["urbano", "rua", "prédio", "metrópole", "bairro"],
+    neighbors: {
+      "urbano": 3, "rua": 5, "prédio": 4, "metrópole": 2, "bairro": 6,
+      "trânsito": 8, "ônibus": 12, "metrô": 10, "calçada": 9, "praça": 11,
+      "comércio": 14, "população": 16, "habitante": 18, "municipal": 13, "prefeitura": 15,
+      "arquitetura": 20, "skyline": 22, "infraestrutura": 25, "avenida": 7, "viela": 17,
+      "centro": 19, "periferia": 21, "subúrbio": 24, "capital": 28, "município": 30
+    }
+  }
+];
+
+// ─── STATE ───
+let currentPuzzle = null;
+let guesses = [];
+let hintIndex = 0;
+let gameOver = false;
+let history = JSON.parse(localStorage.getItem('contexto-history') || '[]');
+
+// ─── NAVIGATION ───
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ─── GAME INIT ───
+function startGame() {
+  currentPuzzle = wordDatabase[Math.floor(Math.random() * wordDatabase.length)];
+  guesses = [];
+  hintIndex = 0;
+  gameOver = false;
+  document.getElementById('guesses-area').innerHTML = `
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">◎</div>
+      <div class="empty-text">nenhuma tentativa ainda</div>
+    </div>`;
+  document.getElementById('counter-badge').style.display = 'none';
+  document.getElementById('word-input').value = '';
+  showScreen('screen-game');
+  setTimeout(() => document.getElementById('word-input').focus(), 400);
+}
+
+function restartGame() {
+  document.getElementById('win-overlay').classList.remove('show');
+  startGame();
+}
+
+// ─── GUESS LOGIC ───
+function getRank(word) {
+  if (!currentPuzzle) return null;
+  const w = word.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const secret = currentPuzzle.secret.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  
+  if (w === secret) return 1;
+
+  // Normalize neighbors keys too
+  for (const [key, rank] of Object.entries(currentPuzzle.neighbors)) {
+    const normKey = key.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (w === normKey) return rank;
+  }
+
+  // Generate pseudo-rank for unknown words based on letter similarity
+  let similarity = 0;
+  for (let c of w) {
+    if (secret.includes(c)) similarity += 1;
+  }
+  const base = 50 + Math.floor(Math.random() * 450);
+  return Math.max(base - similarity * 8, 50);
+}
+
+function getRankClass(rank) {
+  if (rank === 1) return 'rank-1';
+  if (rank <= 20) return 'rank-hot';
+  if (rank <= 100) return 'rank-warm';
+  if (rank <= 300) return 'rank-cold';
+  return 'rank-ice';
+}
+
+function getRankLabel(rank) {
+  if (rank === 1) return '✦';
+  if (rank <= 20) return `#${rank}`;
+  if (rank <= 100) return `#${rank}`;
+  if (rank <= 300) return `#${rank}`;
+  return `#${rank}`;
+}
+
+function getBarWidth(rank) {
+  if (rank === 1) return 100;
+  if (rank <= 10) return 90;
+  if (rank <= 50) return 70;
+  if (rank <= 150) return 45;
+  if (rank <= 400) return 25;
+  return 10;
+}
+
+function submitGuess() {
+  if (gameOver) return;
+  const input = document.getElementById('word-input');
+  const word = input.value.trim();
+  if (!word) return;
+
+  const alreadyGuessed = guesses.find(g => g.word.toLowerCase() === word.toLowerCase());
+  if (alreadyGuessed) {
+    input.classList.add('shake');
+    setTimeout(() => input.classList.remove('shake'), 300);
+    showToast(`"${word}" já foi tentada`, '#7a7a74');
+    input.value = '';
+    return;
+  }
+
+  const rank = getRank(word);
+  guesses.push({ word, rank });
+  guesses.sort((a, b) => a.rank - b.rank);
+
+  input.value = '';
+  renderGuesses();
+
+  document.getElementById('empty-state')?.remove();
+
+  const counter = document.getElementById('counter-badge');
+  counter.style.display = 'block';
+  counter.textContent = `${guesses.length} tentativa${guesses.length !== 1 ? 's' : ''}`;
+
+  if (rank === 1) {
+    winGame(word);
+  }
+}
+
+function renderGuesses() {
+  const area = document.getElementById('guesses-area');
+  area.innerHTML = '';
+
+  guesses.forEach(g => {
+    const rc = getRankClass(g.rank);
+    const row = document.createElement('div');
+    row.className = 'guess-row';
+    row.innerHTML = `
+      <div class="guess-word">${g.word}</div>
+      <div class="guess-bar-wrap">
+        <div class="guess-bar bar-${rc.replace('rank-','')} " style="width:${getBarWidth(g.rank)}%"></div>
+      </div>
+      <div class="rank-badge ${rc}">${getRankLabel(g.rank)}</div>
+    `;
+    area.appendChild(row);
+  });
+}
+
+// ─── WIN ───
+function winGame(word) {
+  gameOver = true;
+  document.getElementById('win-word').textContent = currentPuzzle.secret;
+  document.getElementById('win-guesses-count').innerHTML = `descoberto em <span>${guesses.length}</span> tentativa${guesses.length !== 1 ? 's' : ''}`;
+
+  // Save history
+  history.unshift({ word: currentPuzzle.secret, guesses: guesses.length, win: true, date: new Date().toLocaleDateString('pt-BR') });
+  if (history.length > 20) history.pop();
+  localStorage.setItem('contexto-history', JSON.stringify(history));
+
+  setTimeout(() => {
+    document.getElementById('win-overlay').classList.add('show');
+  }, 500);
+}
+
+// ─── HINT ───
+function getHint() {
+  if (!currentPuzzle) return;
+  if (hintIndex >= currentPuzzle.hints.length) {
+    showToast('sem mais dicas disponíveis', '#4a4a46');
+    return;
+  }
+  const hint = currentPuzzle.hints[hintIndex++];
+  showToast(`dica: tente "${hint}"`, '#c9a84c');
+}
+
+function showToast(msg, color='#c9a84c') {
+  const t = document.getElementById('hint-toast');
+  t.textContent = msg;
+  t.style.color = color;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── HISTORY ───
+function showHistory() {
+  const list = document.getElementById('history-list');
+  list.innerHTML = '';
+  if (history.length === 0) {
+    list.innerHTML = '<div class="empty-hist">nenhum jogo registrado</div>';
+  } else {
+    history.forEach(h => {
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      item.innerHTML = `
+        <div class="hist-word">${h.word}</div>
+        <div class="hist-info">
+          <div class="hist-guesses">${h.guesses} tentativa${h.guesses !== 1 ? 's' : ''}</div>
+          <div class="hist-status ${h.win ? 'status-win' : 'status-lose'}">${h.win ? '✓ resolvido' : '✗ desistido'} · ${h.date}</div>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+  }
+  showScreen('screen-history');
+}
+
+// Focus input on enter
+document.addEventListener('keydown', e => {
+  if (document.getElementById('screen-game').classList.contains('active')) {
+    if (e.key === 'Escape') showScreen('screen-home');
+  }
+});
+</script>
+</body>
+</html>
