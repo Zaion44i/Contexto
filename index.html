@@ -728,100 +728,183 @@
 <div class="hint-toast" id="hint-toast"></div>
 
 <script>
-// ─── WORD DATABASE ───
-const wordDatabase = [
-  {
-    secret: "oceano",
-    hints: ["mar", "onda", "praia", "água", "marítimo"],
-    neighbors: {
-      "mar": 2, "água": 4, "praia": 8, "onda": 10, "marítimo": 15,
-      "rio": 20, "lago": 25, "peixe": 18, "barco": 22, "navio": 16,
-      "mergulho": 30, "sal": 35, "azul": 40, "profundo": 28, "corente": 45,
-      "tubarão": 38, "baleia": 32, "coral": 42, "maré": 12, "litoral": 14,
-      "costa": 19, "ilha": 24, "porto": 27, "submarino": 34, "náutico": 37
-    }
-  },
-  {
-    secret: "livro",
-    hints: ["leitura", "página", "autor", "história", "biblioteca"],
-    neighbors: {
-      "leitura": 3, "página": 5, "autor": 8, "história": 12, "biblioteca": 7,
-      "romance": 15, "conto": 18, "poesia": 20, "texto": 10, "escrita": 13,
-      "capítulo": 6, "leitor": 9, "editora": 22, "literatura": 4, "ficção": 16,
-      "papel": 25, "tinta": 30, "estante": 28, "narrativa": 17, "personagem": 19,
-      "enredo": 21, "obra": 11, "escritor": 14, "manuscrito": 35, "encadernação": 40
-    }
-  },
-  {
-    secret: "música",
-    hints: ["som", "melodia", "ritmo", "canção", "instrumento"],
-    neighbors: {
-      "som": 3, "melodia": 4, "ritmo": 6, "canção": 2, "instrumento": 8,
-      "nota": 10, "acorde": 12, "harmonia": 7, "letra": 15, "voz": 11,
-      "guitarra": 18, "piano": 16, "violão": 17, "bateria": 20, "flauta": 22,
-      "cantor": 9, "compositor": 13, "álbum": 14, "banda": 19, "concerto": 25,
-      "compasso": 21, "tonalidade": 30, "timbre": 28, "frequência": 35, "vibração": 32
-    }
-  },
-  {
-    secret: "tempo",
-    hints: ["hora", "relógio", "minuto", "passado", "futuro"],
-    neighbors: {
-      "hora": 3, "relógio": 5, "minuto": 4, "passado": 8, "futuro": 7,
-      "presente": 9, "segundo": 6, "dia": 12, "ano": 10, "século": 15,
-      "história": 18, "memória": 20, "duração": 13, "período": 14, "época": 16,
-      "cronologia": 22, "calendário": 11, "data": 17, "prazo": 25, "eternidade": 30,
-      "instante": 19, "momento": 21, "ritmo": 28, "mudança": 35, "fluxo": 32
-    }
-  },
-  {
-    secret: "fogo",
-    hints: ["chama", "calor", "brasa", "fumaça", "cinza"],
-    neighbors: {
-      "chama": 2, "calor": 4, "brasa": 6, "fumaça": 5, "cinza": 8,
-      "incêndio": 3, "labareda": 7, "fogueira": 9, "queimar": 10, "ardente": 12,
-      "explosão": 15, "faísca": 11, "lava": 18, "vulcão": 20, "flama": 13,
-      "combustão": 16, "temperatura": 22, "quente": 14, "sol": 25, "luz": 28,
-      "vela": 19, "fósforo": 21, "isqueiro": 24, "aquecimento": 30, "energia": 35
-    }
-  },
-  {
-    secret: "floresta",
-    hints: ["árvore", "mata", "bosque", "natureza", "selva"],
-    neighbors: {
-      "árvore": 2, "mata": 3, "bosque": 4, "natureza": 7, "selva": 5,
-      "verde": 10, "folha": 8, "tronco": 9, "raiz": 12, "galho": 11,
-      "animal": 15, "pássaro": 14, "planta": 13, "vegetação": 6, "madeira": 16,
-      "trilha": 18, "sombra": 20, "umidade": 22, "biodiversidade": 25, "ecossistema": 28,
-      "cedro": 30, "pinheiro": 27, "cogumelo": 35, "musgo": 32, "cipó": 38
-    }
-  },
-  {
-    secret: "sonho",
-    hints: ["dormir", "noite", "imaginação", "desejo", "ilusão"],
-    neighbors: {
-      "dormir": 3, "noite": 5, "imaginação": 4, "desejo": 6, "ilusão": 8,
-      "pesadelo": 7, "inconsciente": 10, "mente": 12, "fantasia": 9, "visão": 11,
-      "esperança": 15, "aspiração": 14, "meta": 18, "objetivo": 20, "utopia": 22,
-      "realidade": 16, "pensamento": 13, "memória": 25, "subconsciente": 28, "surrealismo": 30,
-      "cama": 19, "almofada": 24, "repouso": 21, "vigília": 35, "lucidez": 40
-    }
-  },
-  {
-    secret: "cidade",
-    hints: ["urbano", "rua", "prédio", "metrópole", "bairro"],
-    neighbors: {
-      "urbano": 3, "rua": 5, "prédio": 4, "metrópole": 2, "bairro": 6,
-      "trânsito": 8, "ônibus": 12, "metrô": 10, "calçada": 9, "praça": 11,
-      "comércio": 14, "população": 16, "habitante": 18, "municipal": 13, "prefeitura": 15,
-      "arquitetura": 20, "skyline": 22, "infraestrutura": 25, "avenida": 7, "viela": 17,
-      "centro": 19, "periferia": 21, "subúrbio": 24, "capital": 28, "município": 30
-    }
+// ══════════════════════════════════════════════════════
+// LISTA DE PALAVRAS EM PORTUGUÊS — 5 LETRAS
+// ══════════════════════════════════════════════════════
+const PALAVRAS = [...new Set([
+  "abade","abalo","abana","abate","abeto","aboca","abona","abono","abuso",
+  "acaba","acama","acana","acata","acato","acede","acena","aceno","acera",
+  "acero","acesa","aceso","achar","acima","acode","acola","acora","acude",
+  "acusa","adaga","adega","adere","adeus","adiar","adido","adobe","adoca",
+  "adore","adoro","adota","adote","adubo","adula","afaga","afago","afere",
+  "afeto","afina","afino","afita","aflui","afoga","afoge","afogo","afora",
+  "agata","agave","agita","agito","agora","aguda","agudo","ajuda","ajude",
+  "ajudo","alada","alado","alaga","alago","alamo","album","alega","alego",
+  "alema","alemo","alena","alero","aleve","algas","alhos","aliar","alice",
+  "alien","alija","alijo","alina","alino","alisa","alise","aliso","almas",
+  "aloca","aloco","aloja","alojo","aluno","amada","amado","amaga","amago",
+  "amara","amaro","ambas","ambos","ameba","amena","ameno","amiga","amigo",
+  "amino","amola","amole","amolo","amora","ampla","amplo","anafe","anana",
+  "ancas","ancho","andar","aneis","anela","anele","anelo","angra","anima",
+  "anime","animo","antes","anzol","apara","aparo","apela","apelo","apena",
+  "apeno","apita","apito","apoda","apode","apodo","apoia","apoio","arabe",
+  "arado","ardel","arder","ardeu","ardil","ardor","areia","arena","armas",
+  "aroma","artes","asada","asado","aspas","atlas","atoba","atola","atole",
+  "atolo","atona","atras","atriz","atuca","atuda","atuns","audio","aulas",
+  "autor","avara","avaro","aveia","aviao","aviar","avida","avido","avisa",
+  "avise","aviso","azeda","azede","azedo","azuis",
+  "babas","baeta","bagas","bagos","baiao","baita","baixa","baixo","balao",
+  "balar","balas","balda","baldo","balsa","bamba","bambo","banco","banda",
+  "bando","banha","banho","barba","barca","barco","bares","bario","barra",
+  "barro","basta","baste","basto","batom","beira","belas","belga","belos",
+  "benta","bento","berco","bicha","bicho","bicla","bisao","bispo","bocal",
+  "bocas","bolha","bolos","bomba","bonde","bosco","botao","botas","braco",
+  "brejo","breve","brisa","broca","broco","brota","broto","bruma","bruta",
+  "bruto","bucal","bucho","bulbo","burda","burdo","burgo","burla","burro",
+  "busca","busto",
+  "cacau","cacos","caifa","cajus","calca","calco","calda","caldo","calha",
+  "calhe","calho","calma","calmo","calor","calva","calvo","campa","campo",
+  "canal","canas","canoa","cansa","cante","canto","capaz","capim","capuz",
+  "caqui","carpa","catar","causa","cavar","ceder","cedro","ceifa","cenas",
+  "cerco","certa","certo","cesto","chaga","chale","chapa","chefe","cheia",
+  "cheio","choca","choco","chora","choro","chuva","ciclo","cidra","cifra",
+  "ciosa","cioso","circo","cisao","cisma","cismo","citar","cocar","cocos",
+  "codia","coima","coios","coisa","colmo","colza","combo","conde","cones",
+  "conta","conto","copos","coral","coroa","corsa","corte","corvo","costa",
+  "cotas","coxas","coxia","coxim","coxos","cozer","cravo","creme","crime",
+  "crina","crivo","cromo","crupe","culpa","culto","cunha","cupim","curta",
+  "curto","curva","curvo",
+  "dardo","debut","delta","dengo","densa","denso","desde","dever","deveu",
+  "diabo","dieta","dique","disco","ditar","divas","dobra","dobro","docas",
+  "doida","doido","donas","donos","dopar","dorso","dotar","drama","dreno",
+  "droga","ducha","dueto","dunas","dupla","duplo","duque","duras","duros",
+  "duzia","edema","elide","emana","emite","ereto","errar","erros","euros",
+  "exame",
+  "facao","facho","fados","faixa","falca","falco","falha","falho","falir",
+  "falsa","falso","falta","fanal","farpa","farra","fatal","fauna","febre",
+  "feche","fecho","fedor","feira","feito","fenol","feras","ferir","feroz",
+  "ferra","ferro","fetos","ficha","ficho","figos","filas","filme","final",
+  "firma","fisga","fisco","fitas","fixar","fixas","fixos","flama","flavo",
+  "floco","flora","flota","focal","focar","focos","folha","folio","fomes",
+  "forca","forno","forte","forja","fosco","fosso","fraca","fraco","frade",
+  "frear","freio","frevo","frias","frios","frise","friso","frita","frito",
+  "fruto","fugaz","fugir","fundo","funil","fungo","furar","furor","fusos",
+  "fuzil",
+  "galga","galgo","galha","galho","gamba","gamos","ganas","garfo","garra",
+  "gatos","geada","geado","gemas","genio","genro","geral","gesso","gleba",
+  "gnomo","gordo","gorja","gosto","graca","grade","grama","graxa","grelo",
+  "greve","grife","grilo","grosa","grota","grude","grumo","grupo","guiar",
+  "hertz","hiena","homem","honra","horda","houve","hulha",
+  "icone","idade","igual","ilhas","imago","imita","impor","inata","inato",
+  "irmas","irmos","isola","isole","isolo",
+  "jabos","jaula","jeito","jogar","joias","juizo","junco","junta","junto",
+  "jurar","juros","karma",
+  "labio","lados","laivo","lapso","larga","largo","larva","lasca","laser",
+  "lavar","lavra","lavro","lebre","leiga","leigo","lenda","lenha","lenho",
+  "leque","lesma","letal","limao","limbo","limpa","limpe","limpo","lince",
+  "lindo","linha","linho","lobos","local","lomba","lombo","longe","lugar",
+  "lunar","lutar","luxos",
+  "macas","macao","macha","macho","macro","magia","magoa","magoe","magro",
+  "males","malha","malho","malte","mamao","manga","mango","mania","manto",
+  "mapas","marca","massa","masca","matos","meada","meado","medal","meias",
+  "melar","melas","mesmo","mexer","mexeu","migas","milha","milho","mimos",
+  "molde","molha","molho","monge","monte","morar","mosto","motos","mover",
+  "moveu","mudas","mudos","murro","musca","musgo","mutua","mutuo",
+  "nacao","nadar","nariz","natal","naves","negro","netos","nevoa","nobre",
+  "noite","nomes","norma","novos","nudez","nunca",
+  "obesa","obeso","obice","olhar","olhos","opcao","opina","opino","ordem",
+  "orgao","ossos","ostra","outra","outro","ovino","ovulo",
+  "pacto","padre","pagar","palco","palha","palmo","panda","papel","parar",
+  "parca","parco","parda","pardo","paria","parir","pasta","patio","pausa",
+  "pedal","pedra","pegar","penas","perda","perua","piada","pilar","pilha",
+  "pilho","pinha","pinho","placa","plano","plena","pleno","pluma","poema",
+  "polca","polvo","pombo","ponte","porta","porto","praia","prato","prazo",
+  "presa","preso","prima","primo","prole","prova","provo","prumo","pulga",
+  "pulse","pulso","punha","punho","purga","purgo",
+  "racha","radio","raiva","ranca","ranco","rapaz","rasga","rasgo","raspa",
+  "raspe","raspo","rasto","reata","recuo","reino","remar","repor","rezar",
+  "ricas","rigor","risca","risco","risos","rolha","rolhe","rombo","ronca",
+  "ronco","rosca","rosto","rouba","roube","roubo","roupa","rubra","rugir",
+  "ruivo","rural",
+  "sabao","sabia","sagra","sagre","sagro","salga","salto","salva","salvo",
+  "samba","sarna","saude","sauna","segar","segue","senso","serao","serei",
+  "serve","servo","sigla","signo","silos","sobre","sogra","sogro","solda",
+  "solha","sonar","sonho","sorte","sorvo","suave","sulco","surda","surdo",
+  "surge","surja","surra","surro","susto",
+  "talao","talha","talho","tampa","tarja","tasca","tempo","terca","terco",
+  "tigre","timba","timbo","tinha","tinta","tinto","tocar","toldo","tolhe",
+  "tolhi","tolho","tosca","tosco","trapo","trevo","treze","troca","troco",
+  "trola","trole","trova","truco","trufa","turba","turbo","turca","turco",
+  "turma",
+  "vagar","vagem","valsa","vapor","varia","veado","vedar","veias","velar",
+  "velha","velho","vento","verba","verde","verme","versa","verso","viela",
+  "vigia","vigio","vigor","viola","viole","violo","visor","vista","visto",
+  "vocal","vozes","vulgo","vulto",
+  "zebra","zeros","zurra","zurro"
+])].sort();
+
+// ─── PALAVRAS SECRETAS (subconjunto variado e interessante) ───
+const SECRETAS = [
+  "sonho","bruma","greve","pulso","chuva","pedra","laivo","cerne","troao",
+  "fardo","calma","braco","ferro","folha","crise","honra","dueto","areia",
+  "pluma","corvo","signo","nimbo","trevo","rugir","abalo","karma","nexus",
+  "turma","cunha","vigia","facho","milho","graca","forte","lenda","manto",
+  "baixo","chama","rasgo","molho","bosco","canto","palha","bordo","genio",
+  "timbo","vento","surge","limpo","troca","dobro","lusco","sulco","coisa",
+  "drama","manga","brejo","noite","porta","verme","furor","salva","tinta",
+  "fundo","grilo","faixa","barco","saude","musgo","pilha","torta","vapor",
+  "farpa","punho","cobre","rolha","grade","guiar","circo","balao","casca",
+  "pinha","malha","coxia","ardor","tropa","louro","cerce","turco","raspa",
+  "morsa","blusa","flauta","praca","toldo","algas","anzol","burro","calvo"
+].filter(p => PALAVRAS.includes(p));
+
+// ─── GERAÇÃO DE RANKING SEMÂNTICO LOCAL ───
+// Calcula similaridade entre duas palavras (letra a letra + posição)
+function norm(w) {
+  return w.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function similaridade(a, b) {
+  const na = norm(a), nb = norm(b);
+  let score = 0;
+  // letras em comum (sem posição)
+  const setA = new Set(na), setB = new Set(nb);
+  for (const c of setA) if (setB.has(c)) score += 2;
+  // letras na mesma posição
+  for (let i = 0; i < Math.min(na.length, nb.length); i++) {
+    if (na[i] === nb[i]) score += 3;
   }
-];
+  // bigramas em comum
+  for (let i = 0; i < na.length - 1; i++) {
+    const bg = na[i] + na[i+1];
+    if (nb.includes(bg)) score += 2;
+  }
+  return score;
+}
+
+function calcularRanking(secret) {
+  // Gera ranking de todas as palavras em relação ao segredo
+  const scores = PALAVRAS.map(p => ({ word: p, sim: similaridade(secret, p) }));
+  scores.sort((a, b) => b.sim - a.sim);
+  const rankMap = {};
+  scores.forEach((entry, i) => { rankMap[entry.word] = i + 1; });
+  rankMap[secret] = 1;
+  return rankMap;
+}
+
+// ─── DICAS AUTOMÁTICAS: palavras próximas ao segredo ───
+function gerarDicas(secret, rankMap) {
+  return Object.entries(rankMap)
+    .filter(([w, r]) => w !== secret && r >= 2 && r <= 15)
+    .sort((a, b) => a[1] - b[1])
+    .slice(0, 5)
+    .map(([w]) => w);
+}
 
 // ─── STATE ───
-let currentPuzzle = null;
+let secretWord = null;
+let rankMap = {};
+let dicas = [];
 let guesses = [];
 let hintIndex = 0;
 let gameOver = false;
@@ -835,7 +918,10 @@ function showScreen(id) {
 
 // ─── GAME INIT ───
 function startGame() {
-  currentPuzzle = wordDatabase[Math.floor(Math.random() * wordDatabase.length)];
+  // Escolhe palavra secreta aleatória do pool curado
+  secretWord = SECRETAS[Math.floor(Math.random() * SECRETAS.length)];
+  rankMap = calcularRanking(secretWord);
+  dicas = gerarDicas(secretWord, rankMap);
   guesses = [];
   hintIndex = 0;
   gameOver = false;
@@ -857,25 +943,14 @@ function restartGame() {
 
 // ─── GUESS LOGIC ───
 function getRank(word) {
-  if (!currentPuzzle) return null;
-  const w = word.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const secret = currentPuzzle.secret.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  
-  if (w === secret) return 1;
-
-  // Normalize neighbors keys too
-  for (const [key, rank] of Object.entries(currentPuzzle.neighbors)) {
-    const normKey = key.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if (w === normKey) return rank;
+  const w = norm(word);
+  const s = norm(secretWord);
+  if (w === s) return 1;
+  // Busca na lista normalizada
+  for (const [key, rank] of Object.entries(rankMap)) {
+    if (norm(key) === w) return rank;
   }
-
-  // Generate pseudo-rank for unknown words based on letter similarity
-  let similarity = 0;
-  for (let c of w) {
-    if (secret.includes(c)) similarity += 1;
-  }
-  const base = 50 + Math.floor(Math.random() * 450);
-  return Math.max(base - similarity * 8, 50);
+  return null; // palavra não existe na lista
 }
 
 function getRankClass(rank) {
@@ -888,9 +963,6 @@ function getRankClass(rank) {
 
 function getRankLabel(rank) {
   if (rank === 1) return '✦';
-  if (rank <= 20) return `#${rank}`;
-  if (rank <= 100) return `#${rank}`;
-  if (rank <= 300) return `#${rank}`;
   return `#${rank}`;
 }
 
@@ -906,20 +978,30 @@ function getBarWidth(rank) {
 function submitGuess() {
   if (gameOver) return;
   const input = document.getElementById('word-input');
-  const word = input.value.trim();
-  if (!word) return;
+  const raw = input.value.trim().toLowerCase();
+  if (!raw) return;
 
-  const alreadyGuessed = guesses.find(g => g.word.toLowerCase() === word.toLowerCase());
+  // Verificar se existe na lista
+  const existe = PALAVRAS.some(p => norm(p) === norm(raw));
+  if (!existe) {
+    input.classList.add('shake');
+    setTimeout(() => input.classList.remove('shake'), 300);
+    showToast(`"${raw}" não é uma palavra válida`, '#4a6a8a');
+    return;
+  }
+
+  // Verificar duplicata
+  const alreadyGuessed = guesses.find(g => norm(g.word) === norm(raw));
   if (alreadyGuessed) {
     input.classList.add('shake');
     setTimeout(() => input.classList.remove('shake'), 300);
-    showToast(`"${word}" já foi tentada`, '#7a7a74');
+    showToast(`"${raw}" já foi tentada`, '#4a6a8a');
     input.value = '';
     return;
   }
 
-  const rank = getRank(word);
-  guesses.push({ word, rank });
+  const rank = getRank(raw);
+  guesses.push({ word: raw, rank });
   guesses.sort((a, b) => a.rank - b.rank);
 
   input.value = '';
@@ -931,15 +1013,12 @@ function submitGuess() {
   counter.style.display = 'block';
   counter.textContent = `${guesses.length} tentativa${guesses.length !== 1 ? 's' : ''}`;
 
-  if (rank === 1) {
-    winGame(word);
-  }
+  if (rank === 1) winGame(raw);
 }
 
 function renderGuesses() {
   const area = document.getElementById('guesses-area');
   area.innerHTML = '';
-
   guesses.forEach(g => {
     const rc = getRankClass(g.rank);
     const row = document.createElement('div');
@@ -958,31 +1037,29 @@ function renderGuesses() {
 // ─── WIN ───
 function winGame(word) {
   gameOver = true;
-  document.getElementById('win-word').textContent = currentPuzzle.secret;
-  document.getElementById('win-guesses-count').innerHTML = `descoberto em <span>${guesses.length}</span> tentativa${guesses.length !== 1 ? 's' : ''}`;
+  document.getElementById('win-word').textContent = secretWord;
+  document.getElementById('win-guesses-count').innerHTML =
+    `descoberto em <span>${guesses.length}</span> tentativa${guesses.length !== 1 ? 's' : ''}`;
 
-  // Save history
-  history.unshift({ word: currentPuzzle.secret, guesses: guesses.length, win: true, date: new Date().toLocaleDateString('pt-BR') });
+  history.unshift({ word: secretWord, guesses: guesses.length, win: true, date: new Date().toLocaleDateString('pt-BR') });
   if (history.length > 20) history.pop();
   localStorage.setItem('contexto-history', JSON.stringify(history));
 
-  setTimeout(() => {
-    document.getElementById('win-overlay').classList.add('show');
-  }, 500);
+  setTimeout(() => document.getElementById('win-overlay').classList.add('show'), 500);
 }
 
 // ─── HINT ───
 function getHint() {
-  if (!currentPuzzle) return;
-  if (hintIndex >= currentPuzzle.hints.length) {
-    showToast('sem mais dicas disponíveis', '#4a4a46');
+  if (!secretWord) return;
+  if (hintIndex >= dicas.length) {
+    showToast('sem mais dicas disponíveis', '#4a6a8a');
     return;
   }
-  const hint = currentPuzzle.hints[hintIndex++];
-  showToast(`dica: tente "${hint}"`, '#c9a84c');
+  const hint = dicas[hintIndex++];
+  showToast(`dica: tente "${hint}"`, '#f0c060');
 }
 
-function showToast(msg, color='#c9a84c') {
+function showToast(msg, color='#f0c060') {
   const t = document.getElementById('hint-toast');
   t.textContent = msg;
   t.style.color = color;
@@ -1013,11 +1090,15 @@ function showHistory() {
   showScreen('screen-history');
 }
 
-// Focus input on enter
 document.addEventListener('keydown', e => {
   if (document.getElementById('screen-game').classList.contains('active')) {
     if (e.key === 'Escape') showScreen('screen-home');
   }
+});
+</script>
+
+</body>
+</html>
 });
 </script>
 </body>
